@@ -24,6 +24,10 @@ class User extends Authenticatable  implements MustVerifyEmail
         'email',
         'password',
         'role',
+        'phone',
+        'website',
+        'profile_photo_path',
+        'professional_title',
     ];
 
     /**
@@ -48,4 +52,34 @@ class User extends Authenticatable  implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+
+
+
+
+
+ public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function socialLinks()
+    {
+        return $this->hasOne(UserSocialLinks::class);
+    }
+
+    public function resumes()
+    {
+        return $this->hasMany(UserResume::class);
+    }
+
+
+
+
+
+
+
+
+
+
 }
