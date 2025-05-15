@@ -8,7 +8,6 @@ class CustomAuthenticate extends Middleware
 {
     protected function redirectTo($request): ?string
     {
-        // Don't redirect, just return null so Laravel returns 401 JSON response
         return null;
     }
 }
