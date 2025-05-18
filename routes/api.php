@@ -5,6 +5,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use App\Http\Controllers\Employer\CompanyController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -57,5 +58,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/companies', CompanyController::class);
+});
 
 
