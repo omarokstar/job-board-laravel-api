@@ -29,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 
+
+
 Route::get('/email/verify/{id}/{hash}', function (
     Request $request,
     $id,
@@ -85,15 +87,23 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-
 // jobs
-Route::get('/jobs', [JobController::class, 'index']);
-Route::get('/jobs/{id}', [JobController::class, 'show']);
+// Route::get('/jobs', [JobController::class, 'index']);
+// Route::get('/jobs/{id}', [JobController::class, 'show']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/jobs', JobController::class);
+    
+  
+});
 
 Route::middleware('auth:sanctum')->group(function () {
-Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
+    Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
 });
   
 // cv
 Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
 
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);
+});

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-
+use App\Models\JobApplication;
 class User extends Authenticatable  implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -34,6 +34,10 @@ class User extends Authenticatable  implements MustVerifyEmail
     public function jobs()
 {
     return $this->hasMany(Job::class);
+}
+public function applications()
+{
+    return $this->hasMany(JobApplication::class);
 }
 
     /**

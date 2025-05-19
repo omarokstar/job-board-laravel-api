@@ -14,8 +14,8 @@ class JobApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cover_letter' => 'nullable|string|max:5000',
-            'resume_path' => 'nullable|string|max:255',
+          'cover_letter' => 'required|string|min:100|max:2000',
+           'resume_path' => 'required|file|mimes:pdf,doc,docx|max:2048'
         ];
     }
 }
