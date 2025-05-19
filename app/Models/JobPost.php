@@ -1,34 +1,32 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Job extends Model
+class JobPost extends Model
 {
     use HasFactory;
+protected $table = 'jobs';
+
 
     protected $fillable = [
-        'user_id',
-        'category_id',
+        'employer_id',
         'title',
-        'job_type',
-        'company',
+        'description',
         'location',
         'salary',
-        'description',
+        'status',
+        'rejection_reason',
     ];
 
-
-
-
-
-       public function employer()
+    public function employer()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'employer_id');
     }
 
-  
+ 
+
     public function isPending()
     {
         return $this->status === 'pending';
@@ -43,15 +41,4 @@ class Job extends Model
     {
         return $this->status === 'rejected';
     }
-
-
-
-
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
-    
-
 }
