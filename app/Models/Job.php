@@ -9,14 +9,9 @@ class Job extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'category_id',
-        'title',
-        'job_type',
-        'company',
-        'location',
-        'salary',
-        'description',
+        'user_id', 'title', 'type', 'category', 'location',
+        'salary_type', 'min_salary', 'max_salary',
+        'education_level', 'experience_level', 'job_level', 'description'
     ];
 
     public function category()

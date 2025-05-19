@@ -70,3 +70,7 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 });
+
+Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
+    Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);
+});
