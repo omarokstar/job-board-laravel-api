@@ -10,7 +10,6 @@ class CreateJobsTable extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->string('title');
             $table->enum('job_type', ['Fulltime', 'Part-time', 'Contract', 'Internship', 'Remotely']);
@@ -19,6 +18,12 @@ class CreateJobsTable extends Migration
             $table->string('salary')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->string('salary_type');        // 'annual', 'monthly', etc.
+            $table->decimal('min_salary', 10, 2); // For salary ranges
+            $table->decimal('max_salary', 10, 2);
+            $table->string('education_level');    // 'Bachelor', 'Master', etc.
+            $table->string('experience_level');   // 'Entry', 'Mid', 'Senior'
+            $table->string('job_level'); 
         });
     }
 
