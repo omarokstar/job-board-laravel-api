@@ -25,10 +25,7 @@ protected $table = 'jobs';
         return $this->belongsTo(User::class, 'employer_id');
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class);
-    }
+ 
 
     public function isPending()
     {

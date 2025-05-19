@@ -9,7 +9,6 @@ use App\Http\Controllers\Employer\CompanyController;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
-use App\Http\Controllers\Admin\CommentController;
 
 
 Route::get('/job-posts', [JobPostController::class, 'index']);
@@ -82,3 +81,4 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 });
+  

@@ -24,12 +24,10 @@ class JobPostController extends Controller
             ->paginate(15);
     }
 
-    /**
-     * Show a single job post with employer and comments
-     */
+  
     public function show($id)
     {
-        return JobPost::with(['employer', 'comments.user'])->findOrFail($id);
+        return JobPost::with(['employer'])->findOrFail($id);
     }
 
     /**
