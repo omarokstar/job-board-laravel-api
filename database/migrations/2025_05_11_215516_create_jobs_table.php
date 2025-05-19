@@ -10,23 +10,45 @@ class CreateJobsTable extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            
+            // Job details
             $table->string('title');
-            $table->enum('job_type', ['Fulltime', 'Part-time', 'Contract', 'Internship', 'Remotely']);
+            $table->enum('job_type', ['full-time', 'part-time', 'contract', 'freelance', 'internship']);
             $table->string('company');
             $table->string('location');
-            $table->string('salary')->nullable();
-            $table->text('description')->nullable();
+            
+            // Salary information
+            $table->enum('salary_type', ['range', 'fixed']);
+            $table->decimal('min_salary', 10, 2)->nullable();
+            $table->decimal('max_salary', 10, 2)->nullable();
+            $table->decimal('salary', 10, 2)->nullable();
+            $table->string('salary_tax')->nullable();
+            
+            // Requirements
+            $table->enum('education_level', ['high_school', 'bachelor', 'master', 'phd']);
+            $table->enum('experience_level', ['entry', 'mid', 'senior']);
+            $table->enum('job_level', ['junior', 'mid', 'senior']);
+            
+            // Content
+            $table->text('description');
+            $table->text('responsibilities');
+            $table->text('benefits')->nullable();
+            
+            // Status and metadata
+            $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
+            $table->string('slug')->unique();
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
-            $table->string('salary_type');        // 'annual', 'monthly', etc.
-            $table->decimal('min_salary', 10, 2); // For salary ranges
-            $table->decimal('max_salary', 10, 2);
-            $table->string('education_level');    // 'Bachelor', 'Master', etc.
-            $table->string('experience_level');   // 'Entry', 'Mid', 'Senior'
-            $table->string('job_level'); 
-        });
-    }
+            
+            // Indexes
+            $table->index('status');
+            $table->index('job_type');
+            $table->index('location');
+        });}
 
+   
     public function down()
     {
         Schema::dropIfExists('jobs');

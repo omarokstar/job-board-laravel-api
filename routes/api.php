@@ -74,3 +74,9 @@ Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
     Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);
 });
+
+
+
+// Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
+//     Route::post('/jobs/{id}', [App\Http\Controllers\Employer\JobController::class, 'show']);
+// });
