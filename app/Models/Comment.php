@@ -10,7 +10,6 @@ class Comment extends Model
 
     public function blog()
     {
-        return $this->hasMany(Comment::class);
         return $this->belongsTo(Blog::class);
     }
 } 

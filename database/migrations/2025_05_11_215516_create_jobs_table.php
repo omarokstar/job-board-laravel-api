@@ -36,7 +36,7 @@ class CreateJobsTable extends Migration
             $table->text('benefits')->nullable();
             
             // Status and metadata
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
+            $table->enum('status', ['draft', 'published', 'expired'])->default('draft');
             $table->string('slug')->unique();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();

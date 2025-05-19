@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Employer\CompanyController;
-use App\Http\Controllers\JobController;
+use App\Http\Controllers\Employer\JobController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Employer\BlogController;
 use App\Http\Controllers\Employer\CommentController;
@@ -86,3 +86,5 @@ Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
 Route::apiResource('blogs', BlogController::class);
 
 Route::post('blogs/{blog}/comments', [CommentController::class, 'store']);
+
+Route::apiResource('jobs', JobController::class);
