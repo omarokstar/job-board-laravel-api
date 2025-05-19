@@ -26,6 +26,12 @@ class User extends Authenticatable  implements MustVerifyEmail
         'role',
     ];
 
+
+    public function jobs()
+{
+    return $this->hasMany(Job::class);
+}
+
     /**
      * The attributes that should be hidden for serialization.
      *

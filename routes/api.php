@@ -19,8 +19,11 @@ Route::get('/job-posts', [JobPostController::class, 'index']);
   Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
 
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\Candidate\JobApplicationController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+
 
 
 Route::get('/email/verify/{id}/{hash}', function (
@@ -59,9 +62,6 @@ Route::post('/email/resend', function (Request $request) {
 
 
 
-
-
-
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -73,4 +73,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/companies', CompanyController::class);
+});
+
+
+Route::get('/jobs', [JobController::class, 'index']);
+Route::get('/jobs/{id}', [JobController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 });
