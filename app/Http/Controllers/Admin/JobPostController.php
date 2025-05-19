@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\JobPost;
+use App\Models\Job;
 use Illuminate\Support\Facades\Log; // Optional for basic logging
 
 
@@ -18,7 +18,7 @@ class JobPostController extends Controller
             'status' => 'sometimes|in:pending,approved,rejected'
         ]);
 
-        return JobPost::with('employer')
+        return Job::with('employer')
             ->when($request->status, fn($query, $status) => $query->where('status', $status))
             ->latest()
             ->paginate(15);
@@ -27,7 +27,7 @@ class JobPostController extends Controller
   
     public function show($id)
     {
-        return JobPost::with(['employer'])->findOrFail($id);
+        return Job::with(['employer'])->findOrFail($id);
     }
 
     /**
@@ -35,7 +35,7 @@ class JobPostController extends Controller
      */
     public function approve($id)
     {
-        $jobPost = JobPost::findOrFail($id);
+        $jobPost = Job::findOrFail($id);
 
         $this->validateJobPostStatus($jobPost);
 
@@ -57,7 +57,7 @@ class JobPostController extends Controller
             'rejection_reason' => 'required|string|min:10|max:500'
         ]);
 
-        $jobPost = JobPost::findOrFail($id);
+        $jobPost = Job::findOrFail($id);
 
         $this->validateJobPostStatus($jobPost);
 
@@ -73,7 +73,7 @@ class JobPostController extends Controller
     /**
      * Validate that the job post is pending (reusable method)
      */
-    protected function validateJobPostStatus(JobPost $jobPost)
+    protected function validateJobPostStatus(Job $jobPost)
     {
         if (!$jobPost->isPending()) {
             abort(400, 'This job post has already been processed');

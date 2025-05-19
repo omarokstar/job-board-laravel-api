@@ -9,19 +9,25 @@ use App\Http\Controllers\Employer\CompanyController;
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\Candidate\JobApplicationController;
 
 
-Route::get('/job-posts', [JobPostController::class, 'index']);
+
+// admin 
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/job-posts', [JobPostController::class, 'index']);
     Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
     Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
     Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
-  Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
+});
+// auth
 
-use App\Http\Controllers\JobController;
-use App\Http\Controllers\Candidate\JobApplicationController;
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 
 
@@ -70,10 +76,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
+// company
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/companies', CompanyController::class);
 });
 
+
+
+// jobs
 
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
