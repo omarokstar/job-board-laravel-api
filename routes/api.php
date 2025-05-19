@@ -9,6 +9,7 @@ use App\Http\Controllers\Employer\CompanyController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Employer\BlogController;
+use App\Http\Controllers\Employer\CommentController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -83,3 +84,5 @@ Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
 // });
 
 Route::apiResource('blogs', BlogController::class);
+
+Route::post('blogs/{blog}/comments', [CommentController::class, 'store']);
