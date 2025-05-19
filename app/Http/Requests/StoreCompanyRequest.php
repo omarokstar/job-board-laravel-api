@@ -36,13 +36,12 @@ class StoreCompanyRequest extends FormRequest
             'establishment_year' => 'required|date_format:Y-m-d',
             'company_vision' => 'required|string|max:255',
             'industry_type' => 'required|string|max:255',
-            'team_size' => 'required|integer',
+            'team_size' => 'required|string',
             'company_website' => 'required|url|max:255',
             'banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'linkedIn' => 'sometimes|url|max:255',
-            'facebook' => 'sometimes|url|max:255',
-            'twitter' => 'sometimes|url|max:255',
-            'github' => 'sometimes|url|max:255',
+            'linkedIn' => 'nullable|url',
+            'facebook' => 'nullable|url',
+            'twitter' => 'nullable|url',
         ];
     }
 }
