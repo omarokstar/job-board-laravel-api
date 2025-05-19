@@ -22,10 +22,10 @@ class CompanyController extends Controller
 
 
     $data = $request->only([
-        'company_name', 'email', 'company_address', 'city', 'country',
-        'phone', 'about', 'organization_type', 'establishment_year',
-        'company_vision', 'industry_type', 'team_size', 'company_website',
-        'linkedIn', 'facebook', 'twitter', 'github',
+        'company_name', 'about', 'organization_type',
+        'establishment_year', 'company_vision', 'industry_type',
+        'team_size', 'company_website', 'company_address','linkedIn',
+        'facebook','twitter','email','city','country','phone'
     ]);
 
     if ($request->hasFile('banner')) {
@@ -102,6 +102,26 @@ class CompanyController extends Controller
         return CompanyResource::make($company);
     }
 
+    public function getCompanyProfile()
+    {
+        $user = Auth::user();
+        
+        $company = Company::where('user_id', $user->id)->first();
+        
+        if (!$company) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company profile not found',
+                'data' => null
+            ], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Company profile retrieved successfully',
+            'data' => new CompanyResource($company)
+        ]);
+    }
     public function destroy(string $id)
     {
         $user = Auth::user();

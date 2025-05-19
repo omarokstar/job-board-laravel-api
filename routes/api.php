@@ -75,6 +75,9 @@ Route::apiResource('users', UserController::class);
 
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/companies/profile', [CompanyController::class, 'getCompanyProfile']);
+});
 
 // company
 Route::middleware('auth:sanctum')->group(function () {
