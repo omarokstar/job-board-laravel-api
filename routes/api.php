@@ -5,13 +5,12 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Employer\CompanyController;
-
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\Candidate\JobApplicationController;
-
 
 
 // admin 
@@ -28,7 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-
 
 
 Route::get('/email/verify/{id}/{hash}', function (
@@ -68,11 +66,13 @@ Route::post('/email/resend', function (Request $request) {
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // Route::get('/user', function (Request $request) {
+    //     return $request->user();
+    // });
 
     Route::post('/logout', [AuthController::class, 'logout']);
+Route::apiResource('users', UserController::class);
+
 });
 
 
@@ -84,7 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 // jobs
-
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
@@ -92,3 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 });
   
+// cv
+Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
+
