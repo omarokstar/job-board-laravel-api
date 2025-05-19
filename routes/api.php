@@ -9,10 +9,17 @@ use App\Models\UserProfile;
 use App\Models\UserSocialLinks;
 use App\Models\UserResume;
 use Illuminate\Auth\Events\Verified;
+<<<<<<< HEAD
 use App\Http\Controllers\Candidate\UserController;
 
+=======
+use App\Http\Controllers\Employer\CompanyController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\Candidate\JobApplicationController;
+>>>>>>> fc4dd0fe32e814643a60c7bea8874b17e85626f9
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+
 
 
 Route::get('/email/verify/{id}/{hash}', function (
@@ -51,9 +58,6 @@ Route::post('/email/resend', function (Request $request) {
 
 
 
-
-
-
 Route::middleware(['auth:sanctum'])->group(function () {
     // Route::get('/user', function (Request $request) {
     //     return $request->user();
@@ -78,5 +82,15 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/companies', CompanyController::class);
+});
 
 
+
+Route::get('/jobs', [JobController::class, 'index']);
+Route::get('/jobs/{id}', [JobController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
+});
