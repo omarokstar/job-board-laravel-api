@@ -6,6 +6,19 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Employer\CompanyController;
+
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\JobPostController;
+use App\Http\Controllers\Admin\CommentController;
+
+
+Route::get('/job-posts', [JobPostController::class, 'index']);
+    Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
+    Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
+    Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
+  Route::get('/dashboard', [AdminController::class, 'dashboard']);
+
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
@@ -61,5 +74,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/companies', CompanyController::class);
 });
-
-
