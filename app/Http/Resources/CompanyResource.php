@@ -33,7 +33,6 @@ class CompanyResource extends JsonResource
             'linkedIn' => $this->linkedIn,
             'facebook' => $this->facebook,
             'twitter' => $this->twitter,
-            'github' => $this->github,
             'logo_url' => $this->logo ? asset('storage/images/'.$this->logo) : null,
             'banner_url' => $this->banner ? asset('storage/images/'.$this->banner) : null,
             'created_at' => $this->created_at,

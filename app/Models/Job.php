@@ -40,8 +40,39 @@ class Job extends Model
         });
     }
 
+
+
+
+
+       public function employer()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+  
+    public function isPending()
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isApproved()
+    {
+        return $this->status === 'approved';
+    }
+
+    public function isRejected()
+    {
+        return $this->status === 'rejected';
+    }
+
+
+
+
+
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
+    
+
 }

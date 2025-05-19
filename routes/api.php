@@ -5,14 +5,37 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Auth\Events\Verified;
+use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Employer\CompanyController;
+<<<<<<< HEAD
 use App\Http\Controllers\Employer\JobController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Employer\BlogController;
 use App\Http\Controllers\Employer\CommentController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+=======
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\JobPostController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\Candidate\JobApplicationController;
+>>>>>>> main
 
+
+// admin 
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/job-posts', [JobPostController::class, 'index']);
+    Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
+    Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
+    Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
+    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+
+});
+// auth
+
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 
 Route::get('/email/verify/{id}/{hash}', function (
@@ -52,20 +75,27 @@ Route::post('/email/resend', function (Request $request) {
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    // Route::get('/user', function (Request $request) {
+    //     return $request->user();
+    // });
 
     Route::post('/logout', [AuthController::class, 'logout']);
+Route::apiResource('users', UserController::class);
+
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/companies/profile', [CompanyController::class, 'getCompanyProfile']);
+});
 
+// company
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/companies', CompanyController::class);
 });
 
 
 
+// jobs
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{id}', [JobController::class, 'show']);
 
@@ -88,3 +118,7 @@ Route::apiResource('blogs', BlogController::class);
 Route::post('blogs/{blog}/comments', [CommentController::class, 'store']);
 
 Route::apiResource('jobs', JobController::class);
+  
+// cv
+Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
+
