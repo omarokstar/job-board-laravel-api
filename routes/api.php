@@ -18,6 +18,19 @@ use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Candidate\JobApplicationController;
+use App\Http\Controllers\Admin\JobModerationController;
+use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\Admin\AdminController;
+Route::prefix('admin')->group(function () {
+    Route::get('/job-moderation', [AdminController::class, 'index'])->name('api.admin.job.moderation.index');
+    Route::post('/job/{id}/approve', [AdminController::class, 'approve'])->name('api.admin.job.approve');
+    Route::post('/job/{id}/reject', [AdminController::class, 'reject'])->name('api.admin.job.reject');
+    Route::get('/jobs/pending', [AdminController::class, 'pending'])->name('api.admin.job.pending');
+    Route::get('/jobs/approved', [AdminController::class, 'approved'])->name('api.admin.job.approved');
+    Route::get('/jobs/rejected', [AdminController::class, 'rejected'])->name('api.admin.job.rejected');
+    Route::get('/job/{id}', [AdminController::class, 'show'])->name('api.admin.job.show');
+});
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
