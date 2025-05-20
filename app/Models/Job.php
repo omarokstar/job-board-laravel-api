@@ -41,6 +41,16 @@ class Job extends Model
     }
 
 
+    public function skills()
+{
+    return $this->belongsToMany(Skill::class, 'job_skill');
+}
+
+
+public function tags()
+{
+    return $this->belongsToMany(Tag::class);
+}
 
 
 
