@@ -6,7 +6,30 @@ use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-<<<<<<< HEAD
+
+
+
+public function latestJobs()
+{
+    $latestJobs = Job::where('status', 'approved')
+                    ->orderBy('created_at', 'desc')
+                    ->take(10) 
+                    ->get();
+
+    return response()->json([
+        'jobs' => $latestJobs
+    ]);
+}
+
+
+
+
+
+
+
+
+
+
     public function index(Request $request)
     {
         $query = Job::query();
@@ -75,9 +98,7 @@ class JobController extends Controller
 
 
 
-=======
     
->>>>>>> fb9944e13480c28aaae276e67f4131532df350b6
 }
 
 

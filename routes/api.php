@@ -122,6 +122,7 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 Route::get('/applications', [JobApplicationController::class, 'getApplications']);
+Route::get('/latest-jobs', [JobController::class, 'latestJobs']);
 });
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/job-types', [JobController::class, 'jobTypes']);
