@@ -61,6 +61,19 @@ class JobController extends Controller
 
         return response()->json($job);
     }
+        public function jobTypes()
+        {
+            $types = Job::select('job_type')
+                ->distinct()
+                ->pluck('job_type');
+
+            return response()->json($types);
+        }
+
+
+
+
+
 }
 
 

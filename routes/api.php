@@ -7,9 +7,10 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Employer\CompanyController;
-use App\Http\Controllers\Admin\AdminController;
+// use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 
 
@@ -20,7 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
     Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
     Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
-    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    // Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
 });
 // auth
@@ -66,9 +67,9 @@ Route::post('/email/resend', function (Request $request) {
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    // Route::get('/user', function (Request $request) {
-    //     return $request->user();
-    // });
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
     Route::post('/logout', [AuthController::class, 'logout']);
 Route::apiResource('users', UserController::class);
@@ -93,7 +94,10 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 });
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/job-types', [JobController::class, 'jobTypes']);
   
 // cv
 Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
 
+Route::middleware('auth:sanctum')->get('/user/resumes', [UserController::class, 'userResumes']);
