@@ -19,6 +19,7 @@ class Job extends Model
         'company',
         'location',
         'salary',
+        'fixed_salary', // Added 'fixed_salary' to fillable
         'description',
         'salary_type',
         'min_salary',
@@ -33,13 +34,14 @@ class Job extends Model
 
     protected $casts = [
         'salary' => 'decimal:2',
+        'fixed_salary' => 'decimal:2', // Added cast for fixed_salary
         'min_salary' => 'decimal:2',
         'max_salary' => 'decimal:2',
         'expiry_date' => 'datetime'
     ];
 
     public const STATUS_PENDING = 'pending';
-    public const STATUS_APPROVED = 'approved';
+    public const STATUS_ACTIVE = 'active'; // Changed from APPROVED
     public const STATUS_REJECTED = 'rejected';
     public const STATUS_EXPIRED = 'expired';
     public const STATUS_CLOSED = 'closed';
@@ -49,7 +51,29 @@ class Job extends Model
         'part-time',
         'contract',
         'freelance',
-        'internship'
+        'internship',
+        'temporary' // Added 'temporary'
+    ];
+
+    public const EDUCATION_LEVELS = [
+        'high_school',
+        'bachelor',
+        'master',
+        'phd',
+        'diploma' // Added 'diploma'
+    ];
+
+    public const EXPERIENCE_LEVELS = [
+        'entry',
+        'mid',
+        'senior'
+    ];
+
+    public const JOB_LEVELS = [
+        'junior',
+        'mid',
+        'senior',
+        'lead' // Added 'lead' if used
     ];
 
     protected static function boot()
@@ -57,7 +81,8 @@ class Job extends Model
         parent::boot();
 
         static::saving(function ($job) {
-            if ($job->expiry_date && now()->gt($job->expiry_date)) {
+            // Check if expiry_date has passed AND status is not already 'closed'
+            if ($job->expiry_date && now()->gt($job->expiry_date) && $job->getRawOriginal('status') !== self::STATUS_CLOSED) {
                 $job->status = self::STATUS_EXPIRED;
             }
         });
@@ -66,6 +91,12 @@ class Job extends Model
     public function getStatusAttribute($value)
     {
         return $value === self::STATUS_EXPIRED ? self::STATUS_CLOSED : $value;
+    }
+
+    // Accessor to get the actual database status value
+    public function getActualStatusAttribute(): string
+    {
+        return $this->getRawOriginal('status');
     }
 
     public function employer(): BelongsTo
@@ -105,9 +136,9 @@ class Job extends Model
         return $query->where('status', self::STATUS_PENDING);
     }
 
-    public function scopeApproved($query)
+    public function scopeActive($query) // Renamed from scopeApproved
     {
-        return $query->where('status', self::STATUS_APPROVED);
+        return $query->where('status', self::STATUS_ACTIVE);
     }
 
     public function scopeRejected($query)
@@ -120,24 +151,34 @@ class Job extends Model
         return $query->where('status', self::STATUS_EXPIRED);
     }
 
-    public function isPending(): bool
+    public function scopeClosed($query)
     {
-        return $this->status === self::STATUS_PENDING;
+        return $query->where('status', self::STATUS_CLOSED);
     }
 
-    public function isApproved(): bool
+    public function isPending(): bool
     {
-        return $this->status === self::STATUS_APPROVED;
+        return $this->getRawOriginal('status') === self::STATUS_PENDING;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->getRawOriginal('status') === self::STATUS_ACTIVE;
     }
 
     public function isRejected(): bool
     {
-        return $this->status === self::STATUS_REJECTED;
+        return $this->getRawOriginal('status') === self::STATUS_REJECTED;
     }
 
     public function isExpired(): bool
     {
-        return $this->getOriginal('status') === self::STATUS_EXPIRED;
+        return $this->getRawOriginal('status') === self::STATUS_EXPIRED;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->getRawOriginal('status') === self::STATUS_CLOSED;
     }
 
     public function syncSkills(array $skillNames): void

@@ -7,9 +7,9 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Employer\CompanyController;
-use App\Http\Controllers\Admin\AdminController;
+// use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
-use App\Http\Controllers\JobController;
+use App\Http\Controllers\Employer\JobController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 
 
@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
     Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
     Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
-    Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    // Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
 });
 // auth
@@ -90,20 +90,19 @@ Route::middleware('auth:sanctum')->group(function () {
 // jobs
 // Route::get('/jobs', [JobController::class, 'index']);
 // Route::get('/jobs/{id}', [JobController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
+});
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/jobs', JobController::class);
     
   
 });
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
-});
-  
 // cv
 Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
 
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);
-});
+// Route::middleware(['auth:sanctum'])->group(function () {
+//     Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);
+// });
