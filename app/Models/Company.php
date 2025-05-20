@@ -25,12 +25,11 @@ class Company extends Model
         'country',
         'phone',
         'email',
+        'logo',
+        'banner',
         'linkedIn',
         'facebook',
         'twitter',
-        'github',
-        'logo',
-        'banner',
     ];
     public function User(){
         return $this->belongsTo(User::class);

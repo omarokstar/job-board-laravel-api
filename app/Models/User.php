@@ -24,7 +24,17 @@ class User extends Authenticatable  implements MustVerifyEmail
         'email',
         'password',
         'role',
+        'phone',
+        'website',
+        'profile_photo_path',
+        'professional_title',
     ];
+
+
+    public function jobs()
+{
+    return $this->hasMany(Job::class);
+}
 
     /**
      * The attributes that should be hidden for serialization.
@@ -48,4 +58,36 @@ class User extends Authenticatable  implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+
+
+
+
+
+
+ public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    public function socialLinks()
+    {
+        return $this->hasOne(UserSocialLinks::class);
+    }
+
+    public function resumes()
+    {
+        return $this->hasMany(UserResume::class);
+    }
+
+
+    public function appliedJobs()
+    {
+        return $this->belongsToMany(Job::class, 'job_applications', 'user_id', 'job_id')
+            ->withPivot(['cover_letter', 'resume_path', 'status', 'created_at'])
+            ->withTimestamps();
+    }
+
+
+
+
 }
