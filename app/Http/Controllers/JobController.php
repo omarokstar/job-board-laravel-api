@@ -32,7 +32,7 @@ public function latestJobs()
 
     public function index(Request $request)
     {
-        $query = Job::query();
+        $query =Job::where('status', 'approved');
 
         if ($request->filled('search')) {
             $searchTerm = $request->search;
