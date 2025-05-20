@@ -203,4 +203,14 @@ class UserController extends Controller
 
         return response()->json(['message' => 'CV deleted successfully']);
     }
+
+
+// 
+public function userResumes(Request $request)
+{
+    $user = $request->user();
+    $resumes = $user->resumes()->get(); 
+    return response()->json($resumes);
+}
+
 }
