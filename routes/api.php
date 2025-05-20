@@ -10,6 +10,7 @@ use App\Models\UserSocialLinks;
 use App\Models\UserResume;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Candidate\UserController;
+use App\Http\Controllers\Candidate\DashboardController;
 
 use App\Http\Controllers\Employer\CompanyController;
 // use App\Http\Controllers\Admin\AdminController;
@@ -122,3 +123,4 @@ Route::get('/job-types', [JobController::class, 'jobTypes']);
 Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
 
 Route::middleware('auth:sanctum')->get('/user/resumes', [UserController::class, 'userResumes']);
+Route::middleware('auth:sanctum')->get('/candidate/dashboard', [DashboardController::class, 'dashboard']);
