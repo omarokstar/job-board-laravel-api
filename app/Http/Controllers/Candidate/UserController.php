@@ -12,9 +12,97 @@ use App\Models\UserSocialLinks;
 use App\Models\UserResume;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
+
+
+
+public function uploadResume(Request $request, $userId)
+{
+    $user = User::findOrFail($userId);
+    
+    $validator = Validator::make($request->all(), [
+        'resumes.*' => 'required|file|mimes:pdf,doc,docx|max:5120'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
+
+    $uploadedResumes = [];
+    foreach ($request->file('resumes') as $resumeFile) {
+        $path = $resumeFile->store('resumes', 'public');
+        $resume = $user->resumes()->create([
+            'name' => $resumeFile->getClientOriginalName(),
+            'path' => $path,
+            'size' => $resumeFile->getSize(),
+            'extension' => $resumeFile->getClientOriginalExtension()
+        ]);
+        $uploadedResumes[] = $resume;
+    }
+
+    return response()->json([
+        'message' => 'Resumes uploaded successfully',
+        'resumes' => $uploadedResumes
+    ]);
+}
+
+
+
+
+
+
+
+// Add these methods to your existing UserController
+public function verifyPassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required|string'
+    ]);
+
+    return response()->json([
+        'valid' => Hash::check($request->current_password, $request->user()->password)
+    ]);
+}
+
+public function updatePassword(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'current_password' => 'required|string',
+        'password' => 'required|string|min:8|confirmed',
+        'password_confirmation' => 'required|string|min:8'
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
+    }
+
+    $user = $request->user();
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json(['message' => 'Current password is incorrect'], 422);
+    }
+
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    return response()->json(['message' => 'Password updated successfully']);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function index()
     {
         $users = User::with(['profile', 'socialLinks', 'resumes'])->get();
@@ -168,6 +256,9 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User updated successfully', 'user' => $user->load(['profile', 'socialLinks', 'resumes'])]);
     }
+
+
+
 
     // Delete user and related data
     public function destroy($id)
