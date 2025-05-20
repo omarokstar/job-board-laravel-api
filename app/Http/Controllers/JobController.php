@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-<<<<<<< HEAD
     public function index(Request $request)
     {
         $query = Job::query();
@@ -75,9 +74,7 @@ class JobController extends Controller
 
 
 
-=======
     
->>>>>>> fb9944e13480c28aaae276e67f4131532df350b6
 }
 
 
