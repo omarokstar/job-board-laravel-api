@@ -16,6 +16,7 @@ use App\Http\Controllers\Employer\CompanyController;
 // use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Admin\JobModerationController;
@@ -131,3 +132,9 @@ Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'dele
 
 Route::middleware('auth:sanctum')->get('/user/resumes', [UserController::class, 'userResumes']);
 Route::middleware('auth:sanctum')->get('/candidate/dashboard', [DashboardController::class, 'dashboard']);
+// payment
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
+    Route::get('/subscription-status', [SubscriptionController::class, 'status']);
+});

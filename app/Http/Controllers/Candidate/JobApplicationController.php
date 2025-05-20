@@ -12,6 +12,11 @@ class JobApplicationController extends Controller
 public function apply(JobApplicationRequest $request, $jobId)
 {
     $user = Auth::user(); 
+      if (!$user->subscribed('default')) {
+        if ($user->applications()->count() >= 3) {
+            return response()->json(['message' => 'Upgrade to premium to apply to more jobs'], 403);
+        }
+    }
 
     $job = Job::findOrFail($jobId);
 
