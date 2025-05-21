@@ -106,12 +106,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Job Applications
     Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
     Route::get('/jobs/{job}/applications', [JobApplicationController::class, 'getJobApplications']);
-    Route::patch('/applications/{id}/status', [JobApplicationController::class, 'updateStatus']);
     Route::get('/applications/{id}/resume', [JobApplicationController::class, 'downloadResume']);
+    Route::patch('/applications/{application}', [JobApplicationController::class, 'updateStatus']);
 });
 // cv
 Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
-
+Route::get('users/{userId}/resumes/{resumeId}', [JobApplicationController::class, 'storeResume']);
 
 // Route::middleware(['auth:sanctum'])->group(function () {
 //     Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);

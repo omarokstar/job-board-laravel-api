@@ -9,6 +9,7 @@ use App\Models\JobApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class JobApplicationController extends Controller
 {
@@ -50,59 +51,50 @@ class JobApplicationController extends Controller
             return response()->json(['message' => 'Unauthorized action.'], 403);
         }
         $job = Job::where('id', $jobId)
-                  ->where('employer_id', $user->id)
+                  ->where('user_id', $user->id)
                   ->firstOrFail();
 
         $applications = JobApplication::where('job_id', $job->id)
                         ->with(['user' => function($query) {
-                            $query->select('id', 'name', 'email', 'position', 'experience', 'education', 'avatar');
+                            $query->select('id', 'name', 'email');
                         }])
                         ->get();
 
         return response()->json($applications);
     }
-
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, $id) 
     {
+        try {
+            $application = JobApplication::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Application not found.'], 404);
+        }
+    
         $user = Auth::user();
-        
-        if ($user->role !== 'employer') {
-            return response()->json(['message' => 'Unauthorized action.'], 403);
+    
+        if ($user->id !== $application->job->user_id) {
+            return response()->json(['message' => 'Unauthorized to update this application.'], 403);
         }
-
-        $application = JobApplication::whereHas('job', function($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->findOrFail($id);
-
-        $validStatuses = ['pending', 'shortlisted', 'accepted', 'rejected'];
-        
-        if (!in_array($request->status, $validStatuses)) {
-            return response()->json(['message' => 'Invalid status.'], 422);
-        }
-
-        $application->update(['status' => $request->status]);
-
-        return response()->json([
-            'message' => 'Application status updated successfully.',
-            'application' => $application
+    
+        $validated = $request->validate([
+            'status' => ['required', 'string', Rule::in(['pending', 'reviewed', 'accepted', 'rejected'])],
         ]);
-    }
-
-    public function downloadResume($id)
-    {
-        $user = Auth::user();
-        $application = JobApplication::with('job')->findOrFail($id);
-
-        // Check if user is either the applicant or the employer
-        if ($user->id !== $application->user_id && $user->id !== $application->job->employer_id) {
-            return response()->json(['message' => 'Unauthorized action.'], 403);
+    
+        try {
+            $application->status = $validated['status'];
+            $application->save();
+    
+            return response()->json([
+                'message' => 'Application status updated successfully.',
+                'application' => $application->fresh()
+            ]);
+        } catch (\Exception $e) {
+            \Log::error("Failed to update application status: " . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to update application status.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        if (!$application->resume_path || !Storage::disk('public')->exists($application->resume_path)) {
-            return response()->json(['message' => 'Resume not found.'], 404);
-        }
-
-        return Storage::disk('public')->download($application->resume_path);
     }
 
     protected function storeResume($file)
