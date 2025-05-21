@@ -10,6 +10,7 @@ use App\Http\Controllers\Employer\CompanyController;
 // use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\Employer\JobController;
+use App\Http\Controllers\Employer\CategoryController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 
 
@@ -102,6 +103,10 @@ Route::middleware('auth:sanctum')->group(function () {
 //     Route::apiResource('/jobs/{job}/applications', [JobApplicationController::class, 'getJobApplications']);
     
 // });
+//categories
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/categories', CategoryController::class);
+});
 Route::middleware(['auth:sanctum'])->group(function () {
     // Job Applications
     Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);

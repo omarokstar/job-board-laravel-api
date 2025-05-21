@@ -19,36 +19,28 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'type' => [
                 'required',
-                Rule::in(Job::JOB_TYPES) // Using constant from Job model
+                Rule::in(Job::JOB_TYPES)
             ],
             'category_id' => 'required|exists:categories,id',
             'location' => 'required|string|max:255',
-            'salary_type' => [
-                'required',
-                Rule::in(['range', 'fixed'])
-            ],
-            'min_salary' => 'required_if:salary_type,range|numeric|min:0',
-            'max_salary' => 'required_if:salary_type,range|numeric|gt:min_salary',
-            'salary' => 'required_if:salary_type,fixed|numeric|min:0',
+            'salary_type' => ['required', Rule::in(['range', 'fixed'])],
+            'min_salary' => 'nullable|numeric|required_if:salary_type,range',
+            'max_salary' => 'nullable|numeric|gte:min_salary|required_if:salary_type,range',
             'education_level' => [
                 'required',
-                Rule::in(Job::EDUCATION_LEVELS) // Using constant from Job model
+                Rule::in(Job::EDUCATION_LEVELS)
             ],
             'experience_level' => [
                 'required',
-                Rule::in(Job::EXPERIENCE_LEVELS) // Using constant from Job model
+                Rule::in(Job::EXPERIENCE_LEVELS)
             ],
             'job_level' => [
                 'required',
-                Rule::in(Job::JOB_LEVELS) // Using constant from Job model
+                Rule::in(Job::JOB_LEVELS)
             ],
             'description' => 'required|string|min:100',
             'responsibilities' => 'required|string|min:50',
             'company' => 'required|string|max:255',
-            'status' => [
-                'required',
-                Rule::in([Job::STATUS_PENDING, Job::STATUS_ACTIVE, Job::STATUS_CLOSED]), // Using constants
-            ],
             'tags' => 'sometimes|array',
             'tags.*' => 'string|max:50',
             'skills' => 'required|array|min:3',
@@ -57,44 +49,29 @@ class JobController extends Controller
 
         $validated['user_id'] = Auth::id();
 
-        if (strlen($validated['description']) < 100) {
-            return response()->json([
-                'message' => 'Description must be at least 100 characters',
-                'errors' => [
-                    'description' => ['The description field must be at least 100 characters.']
-                ]
-            ], 422);
-        }
-
-        if (strlen($validated['responsibilities']) < 50) {
-            return response()->json([
-                'message' => 'Responsibilities must be at least 50 characters',
-                'errors' => [
-                    'responsibilities' => ['The responsibilities field must be at least 50 characters.']
-                ]
-            ], 422);
-        }
 
         $validated['job_type'] = $validated['type'];
         unset($validated['type']);
 
-        if (isset($validated['salary']) && $validated['salary_type'] === 'fixed') {
-             $validated['fixed_salary'] = $validated['salary'];
-             unset($validated['salary']);
-        }
+        if ($validated['salary_type'] === 'fixed') {
+            $validated['min_salary'] = null;
+            $validated['max_salary'] = null;
+        } else {
+            $validated['fixed_salary'] = null;
+        }    
 
-        $job = Job::create($validated);
+       $job = Job::create($validated);
 
-        $this->syncSkills($job, $request->skills);
+       $this->syncSkills($job, $request->skills);
 
-        if ($request->has('tags')) {
-            $this->syncTags($job, $request->tags);
-        }
+       if ($request->has('tags')) {
+           $this->syncTags($job, $request->tags);
+       }
 
-        return response()->json([
-            'message' => 'Job created successfully',
-            'job' => $job->load(['skills', 'tags'])
-        ], 201);
+       return response()->json([
+           'message' => 'Job created successfully',
+           'job' => $job->load(['skills', 'tags'])
+       ], 201);
     }
 
     protected function syncSkills(Job $job, array $skills)
@@ -155,9 +132,8 @@ class JobController extends Controller
             'skills' => 'sometimes|array',
             'skills.*' => 'string|max:50',
             'salary_type' => 'sometimes|in:fixed,range',
-            'fixed_salary' => 'required_if:salary_type,fixed|numeric|min:0',
-            'min_salary' => 'required_if:salary_type,range|numeric|min:0',
-            'max_salary' => 'required_if:salary_type,range|numeric|gt:min_salary',
+            'min_salary' => 'nullable|numeric',
+            'max_salary' => 'nullable|numeric|gte:min_salary', // Keep gte for range if you want
             'category_id' => 'sometimes|exists:categories,id'
         ]);
 

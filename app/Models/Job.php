@@ -2,205 +2,81 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
 
 class Job extends Model
 {
     use HasFactory;
+ 
+    const JOB_TYPES = ['full-time', 'part-time', 'contract', 'temporary', 'internship', 'remote'];
+    const EDUCATION_LEVELS = ['high_school', 'bachelor', 'master', 'phd']; 
+    const EXPERIENCE_LEVELS = ['entry', 'mid', 'senior', 'executive']; 
+    const JOB_LEVELS = ['intern', 'junior', 'mid', 'senior', 'lead'];
+
+    const STATUS_PENDING = 'pending';  
+    const STATUS_ACTIVE = 'active';    
+    const STATUS_CLOSED = 'closed';    
+    const STATUS_EXPIRED = 'expired';  // System-set if expiry date passed
 
     protected $fillable = [
-       
-      //i should delete user id from the table
         'title',
-        'job_type',
-        'company',
+        'user_id', // The employer who posted the job
+        'category_id',
         'location',
-        'salary',
-        'fixed_salary', // Added 'fixed_salary' to fillable
-        'description',
         'salary_type',
         'min_salary',
         'max_salary',
         'education_level',
         'experience_level',
         'job_level',
+        'description',
         'responsibilities',
-        'status',
-        'expiry_date'
+        'company', // Added 'company' field which is in your frontend
+        'job_type',
+        'status', // This needs to be fillable to be set by admin or system
+        'expiry_date', // Important for automatic closing
+        'keywords',
     ];
 
-    protected $casts = [
-        'salary' => 'decimal:2',
-        'fixed_salary' => 'decimal:2', // Added cast for fixed_salary
-        'min_salary' => 'decimal:2',
-        'max_salary' => 'decimal:2',
-        'expiry_date' => 'datetime'
+    // Set default status for new jobs
+    protected $attributes = [
+        'status' => self::STATUS_PENDING, // New jobs start as 'pending'
     ];
 
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_ACTIVE = 'active'; // Changed from APPROVED
-    public const STATUS_REJECTED = 'rejected';
-    public const STATUS_EXPIRED = 'expired';
-    public const STATUS_CLOSED = 'closed';
-
-    public const JOB_TYPES = [
-        'full-time',
-        'part-time',
-        'contract',
-        'freelance',
-        'internship',
-        'temporary' // Added 'temporary'
-    ];
-
-    public const EDUCATION_LEVELS = [
-        'high_school',
-        'bachelor',
-        'master',
-        'phd',
-        'diploma' // Added 'diploma'
-    ];
-
-    public const EXPERIENCE_LEVELS = [
-        'entry',
-        'mid',
-        'senior'
-    ];
-
-    public const JOB_LEVELS = [
-        'junior',
-        'mid',
-        'senior',
-        'lead' // Added 'lead' if used
-    ];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function ($job) {
-            // Check if expiry_date has passed AND status is not already 'closed'
-            if ($job->expiry_date && now()->gt($job->expiry_date) && $job->getRawOriginal('status') !== self::STATUS_CLOSED) {
-                $job->status = self::STATUS_EXPIRED;
-            }
-        });
-    }
-
+    // Accessor for 'status' (if you want to map 'expired' to 'closed' for frontend display)
+    // Your current JobController has this. Keep it if you want that behavior.
     public function getStatusAttribute($value)
     {
-        return $value === self::STATUS_EXPIRED ? self::STATUS_CLOSED : $value;
+        if ($value === self::STATUS_EXPIRED) {
+            return self::STATUS_CLOSED;
+        }
+        return $value;
     }
 
-    // Accessor to get the actual database status value
-    public function getActualStatusAttribute(): string
+    // Relationships (ensure these are correctly defined)
+    public function user() // The employer who posted the job
     {
-        return $this->getRawOriginal('status');
+        return $this->belongsTo(User::class);
     }
 
-    public function employer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function skills(): BelongsToMany
+    public function skills()
     {
-        return $this->belongsToMany(Skill::class, 'job_skill')
-            ->withTimestamps();
+        return $this->belongsToMany(Skill::class, 'job_skill'); // Ensure pivot table name if not default
     }
 
-    public function tags(): BelongsToMany
+    public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'job_tag')
-            ->withTimestamps();
+        return $this->belongsToMany(Tag::class, 'job_tag'); // Ensure pivot table name if not default
     }
 
     public function applications()
     {
         return $this->hasMany(JobApplication::class);
-    }
-
-    public function applicationsCount()
-    {
-        return $this->hasMany(JobApplication::class)->count();
-    }
-
-    public function scopePending($query)
-    {
-        return $query->where('status', self::STATUS_PENDING);
-    }
-
-    public function scopeActive($query) // Renamed from scopeApproved
-    {
-        return $query->where('status', self::STATUS_ACTIVE);
-    }
-
-    public function scopeRejected($query)
-    {
-        return $query->where('status', self::STATUS_REJECTED);
-    }
-
-    public function scopeExpired($query)
-    {
-        return $query->where('status', self::STATUS_EXPIRED);
-    }
-
-    public function scopeClosed($query)
-    {
-        return $query->where('status', self::STATUS_CLOSED);
-    }
-
-    public function isPending(): bool
-    {
-        return $this->getRawOriginal('status') === self::STATUS_PENDING;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->getRawOriginal('status') === self::STATUS_ACTIVE;
-    }
-
-    public function isRejected(): bool
-    {
-        return $this->getRawOriginal('status') === self::STATUS_REJECTED;
-    }
-
-    public function isExpired(): bool
-    {
-        return $this->getRawOriginal('status') === self::STATUS_EXPIRED;
-    }
-
-    public function isClosed(): bool
-    {
-        return $this->getRawOriginal('status') === self::STATUS_CLOSED;
-    }
-
-    public function syncSkills(array $skillNames): void
-    {
-        $skills = collect($skillNames)->map(function ($name) {
-            return Skill::firstOrCreate(['name' => $name])->id;
-        });
-
-        $this->skills()->sync($skills);
-    }
-
-    public function syncTags(?array $tagNames): void
-    {
-        if (empty($tagNames)) {
-            $this->tags()->detach();
-            return;
-        }
-
-        $tags = collect($tagNames)->map(function ($name) {
-            return Tag::firstOrCreate(['name' => $name])->id;
-        });
-
-        $this->tags()->sync($tags);
     }
 }
