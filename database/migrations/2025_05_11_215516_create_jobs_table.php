@@ -17,7 +17,6 @@ class CreateJobsTable extends Migration
             $table->string('location');
             $table->string('salary')->nullable();
             $table->text('description')->nullable();
-
         });
     }
 
