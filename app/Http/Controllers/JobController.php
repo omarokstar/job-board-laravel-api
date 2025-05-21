@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-<<<<<<< HEAD
-    
-=======
     public function index(Request $request)
     {
         $query = Job::query();
@@ -73,12 +70,6 @@ class JobController extends Controller
             return response()->json($types);
         }
 
-
-
-
-
->>>>>>> 6534442da0b460097b3ed300ea2f04661d7b3ab5
 }
-
 
 

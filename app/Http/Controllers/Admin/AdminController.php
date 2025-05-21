@@ -9,19 +9,20 @@ use App\Http\Controllers\Controller;
 class AdminController extends Controller
 {
     public function index()
-    {
-        $pendingJobs = JobPost::where('status', 'pending')->get();
-        $approvedJobs = JobPost::where('status', 'approved')->latest()->take(3)->get();
-        $rejectedJobsCount = JobPost::where('status', 'rejected')->count();
+{
+    $pendingJobs = JobPost::where('status', 'pending')->get();
+    $approvedJobs = JobPost::where('status', 'approved')->latest()->take(3)->get();
+    $rejectedJobs = JobPost::where('status', 'rejected')->get(); // ✅ Define it here
 
-        return response()->json([
-            'pending_jobs' => $pendingJobs,
-            'approved_jobs' => $approvedJobs,
-            'pending_count' => $pendingJobs->count(),
-            'approved_count' => JobPost::where('status', 'approved')->count(),
-            'rejected_count' => $rejectedJobsCount,
-        ], 200);
-    }
+    return response()->json([
+        'pending_jobs' => $pendingJobs,
+        'approved_jobs' => $approvedJobs,
+        'rejected_jobs' => $rejectedJobs, // ✅ Now you can include it
+        'pending_count' => $pendingJobs->count(),
+        'approved_count' => JobPost::where('status', 'approved')->count(),
+        'rejected_count' => $rejectedJobs->count(),
+    ], 200);
+}
 
     public function approve($id)
     {
@@ -65,14 +66,15 @@ class AdminController extends Controller
         ], 200);
     }
 
-    public function rejected()
-    {
-        $rejectedJobs = JobPost::where('status', 'rejected')->get();
+   public function rejected()
+{
+    $rejectedJobs = JobPost::whereRaw('LOWER(status) = ?', ['rejected'])->get();
 
-        return response()->json([
-            'rejected_jobs' => $rejectedJobs,
-        ], 200);
-    }
+    return response()->json([
+        'rejected_jobs' => $rejectedJobs,
+        'count' => $rejectedJobs->count(),
+    ], 200);
+}
 
     public function show($id)
     {

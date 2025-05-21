@@ -13,10 +13,17 @@ use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Candidate\DashboardController;
 
 use App\Http\Controllers\Employer\CompanyController;
-use App\Http\Controllers\Admin\JobModerationController;
+// use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Candidate\JobApplicationController;
+use App\Http\Controllers\Admin\JobModerationController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\AdminController;
+
+
+
 Route::prefix('admin')->group(function () {
     Route::get('/job-moderation', [AdminController::class, 'index'])->name('api.admin.job.moderation.index');
     Route::post('/job/{id}/approve', [AdminController::class, 'approve'])->name('api.admin.job.approve');
@@ -27,25 +34,11 @@ Route::prefix('admin')->group(function () {
     Route::get('/job/{id}', [AdminController::class, 'show'])->name('api.admin.job.show');
 });
 
-// use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\JobPostController;
-use App\Http\Controllers\JobController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\Candidate\JobApplicationController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 
-// admin 
-Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/job-posts', [JobPostController::class, 'index']);
-    Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
-    Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
-    Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
-    // Route::get('/dashboard', [AdminController::class, 'dashboard']);
-
-});
 // auth
 
     Route::post('/register', [AuthController::class, 'register']);
