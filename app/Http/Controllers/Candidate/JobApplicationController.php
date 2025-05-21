@@ -19,20 +19,13 @@ class JobApplicationController extends Controller
         
         if ($user->role !== 'candidate') {
             return response()->json(['message' => 'Unauthorized action.'], 403);
-        }
-
-<<<<<<< HEAD
-public function apply(JobApplicationRequest $request, $jobId)
-{
+            }
         $user = $request->user(); 
       if (!$user->subscribed('default')) {
         if ($user->appliedJobs()->count() >= 3) {
             return response()->json(['message' => 'Upgrade to premium to apply to more jobs'], 403);
         }
     }
-=======
-        $job = Job::findOrFail($jobId);
->>>>>>> d2dfc3eb8fcf1dd1cfc5cd2938b9f11555759f29
 
         if ($user->applications()->where('job_id', $jobId)->exists()) {
             return response()->json(['message' => 'You have already applied for this job.'], 409);
@@ -54,6 +47,7 @@ public function apply(JobApplicationRequest $request, $jobId)
         ], 201);
     }
 
+
     public function getJobApplications($jobId)
     {
         $user = Auth::user();
@@ -71,31 +65,9 @@ public function apply(JobApplicationRequest $request, $jobId)
                         }])
                         ->get();
 
-<<<<<<< HEAD
-
-
-
-public function getApplications()
-{
-    $user = Auth::user();
-
-   
-    $applications = JobApplication::with('job')
-        ->where('user_id', $user->id)
-        ->get();
-
-    return response()->json(['applications' => $applications], 200);
-}
-
-
-
-    }
-     
-
-
-=======
         return response()->json($applications);
     }
+
     public function updateStatus(Request $request, $id) 
     {
         try {
@@ -131,6 +103,7 @@ public function getApplications()
         }
     }
 
+
     protected function storeResume($file)
     {
         if (!$file) {
@@ -140,4 +113,3 @@ public function getApplications()
         return $file->store('resumes', 'public');
     }
 }
->>>>>>> d2dfc3eb8fcf1dd1cfc5cd2938b9f11555759f29
