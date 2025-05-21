@@ -9,8 +9,8 @@ class AddStatusToJobsTable extends Migration
     public function up()
     {
         Schema::table('jobs', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'approved', 'rejected'])
-                  ->default('pending');
+            $table->enum('status', ['Pending', 'Active', 'Closed'])
+                  ->default('Pending');
             $table->text('rejection_reason')->nullable();
         });
     }

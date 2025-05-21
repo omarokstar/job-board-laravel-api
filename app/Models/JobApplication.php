@@ -16,6 +16,9 @@ class JobApplication extends Model
         'resume_path',
         'status',
     ];
+    protected $attributes = [
+        'status' => 'pending', // Default status for new applications
+    ];
 
     
     public function job()

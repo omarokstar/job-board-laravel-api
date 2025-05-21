@@ -7,8 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+<<<<<<< HEAD
 use Laravel\Cashier\Billable;
 
+=======
+
+use App\Models\JobApplication;
+>>>>>>> origin/JobsCruds
 class User extends Authenticatable  implements MustVerifyEmail
 {
 
@@ -37,6 +42,10 @@ class User extends Authenticatable  implements MustVerifyEmail
     public function jobs()
 {
     return $this->hasMany(Job::class);
+}
+public function applications()
+{
+    return $this->hasMany(JobApplication::class);
 }
 
     /**
