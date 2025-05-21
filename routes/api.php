@@ -19,12 +19,22 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\Employer\JobController as Job;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Employer\JobController;
+use App\Http\Controllers\Employer\CategoryController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Admin\JobModerationController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\AdminController;
 
 
+// admin 
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/job-posts', [JobPostController::class, 'index']);
+    Route::get('/job-posts/{id}', [JobPostController::class, 'show']);
+    Route::post('/job-posts/{id}/approve', [JobPostController::class, 'approve']);
+    Route::post('/job-posts/{id}/reject', [JobPostController::class, 'reject']);
+    // Route::get('/dashboard', [AdminController::class, 'dashboard']);
 
 Route::prefix('admin')->group(function () {
     Route::get('/job-moderation', [AdminController::class, 'index'])->name('api.admin.job.moderation.index');
@@ -45,6 +55,8 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
+
+
 
 
 Route::get('/email/verify/{id}/{hash}', function (
@@ -116,10 +128,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
-
 // jobs
-Route::get('/jobs', [JobController::class, 'index']);
-Route::get('/jobs/{id}', [JobController::class, 'show']);
+// Route::get('/jobs', [JobController::class, 'index']);
+// Route::get('/jobs/{id}', [JobController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
@@ -129,8 +140,30 @@ Route::get('/latest-jobs', [JobController::class, 'latestJobs']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/job-types', [JobController::class, 'jobTypes']);
   
+    Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/jobs', JobController::class);
+});
+// Route::middleware('auth:sanctum')->group(function () {
+//     Route::apiResource('/jobs/{job}/applications', [JobApplicationController::class, 'getJobApplications']);
+    
+// });
+//categories
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/categories', CategoryController::class);
+});
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Job Applications
+    Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
+    Route::get('/jobs/{job}/applications', [JobApplicationController::class, 'getJobApplications']);
+    Route::get('/applications/{id}/resume', [JobApplicationController::class, 'downloadResume']);
+    Route::patch('/applications/{application}', [JobApplicationController::class, 'updateStatus']);
+});
 // cv
 Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'deleteCV']);
+Route::get('users/{userId}/resumes/{resumeId}', [JobApplicationController::class, 'storeResume']);
 
 Route::middleware('auth:sanctum')->get('/user/resumes', [UserController::class, 'userResumes']);
 Route::middleware('auth:sanctum')->get('/candidate/dashboard', [DashboardController::class, 'dashboard']);
@@ -149,4 +182,6 @@ Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
 
 // Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
 //     Route::post('/jobs/{id}', [App\Http\Controllers\Employer\JobController::class, 'show']);
+// Route::middleware(['auth:sanctum'])->group(function () {
+//     Route::post('/jobs', [App\Http\Controllers\Employer\JobController::class, 'store']);
 // });

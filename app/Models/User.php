@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Cashier\Billable;
 
+
+use App\Models\JobApplication;
 class User extends Authenticatable  implements MustVerifyEmail
 {
 
@@ -37,6 +39,10 @@ class User extends Authenticatable  implements MustVerifyEmail
     public function jobs()
 {
     return $this->hasMany(Job::class);
+}
+public function applications()
+{
+    return $this->hasMany(JobApplication::class);
 }
 
     /**
