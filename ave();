@@ -1,0 +1,11 @@
+[90m= [39m[34;4mApp\Models\Job[39;24m {#6277
+    [34muser_id[39m: [35m1[39m,
+    [34mtitle[39m: "[32mTest Job[39m",
+    [34mcompany[39m: "[32mTest Company[39m",
+    [34mlocation[39m: "[32mTest Location[39m",
+    [34mdescription[39m: "[32mTest description[39m",
+    [34mupdated_at[39m: "[32m2025-05-19 12:32:52[39m",
+    [34mcreated_at[39m: "[32m2025-05-19 12:32:52[39m",
+    [34mid[39m: [35m1[39m,
+  }
+

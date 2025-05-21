@@ -9,14 +9,19 @@ class Job extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'category_id',
+       
+      //i should delete user id from the table
         'title',
         'job_type',
         'company',
         'location',
         'salary',
         'description',
+        'salary_type', 'min_salary', 'max_salary',
+        'education_level',
+         'experience_level', 
+         'job_level'
+   
     ];
 
 
