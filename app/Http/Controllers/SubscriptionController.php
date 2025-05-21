@@ -18,7 +18,6 @@ class SubscriptionController extends Controller
             $user->newSubscription('default', 'price_1RQvoyEI022bdeAWIhhn63xC') 
                  ->create($request->payment_method);
 
-            // optional: update user field
             $user->is_premium = true;
             $user->save();
 
