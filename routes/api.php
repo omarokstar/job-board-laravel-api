@@ -16,6 +16,7 @@ use App\Http\Controllers\Employer\CompanyController;
 // use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Admin\JobModerationController;
@@ -122,6 +123,7 @@ Route::get('/jobs/{id}', [JobController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
 Route::post('/jobs/{id}/apply', [JobApplicationController::class, 'apply']);
 Route::get('/applications', [JobApplicationController::class, 'getApplications']);
+Route::get('/latest-jobs', [JobController::class, 'latestJobs']);
 });
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/job-types', [JobController::class, 'jobTypes']);
@@ -131,3 +133,9 @@ Route::delete('users/{userId}/resumes/{resumeId}', [UserController::class, 'dele
 
 Route::middleware('auth:sanctum')->get('/user/resumes', [UserController::class, 'userResumes']);
 Route::middleware('auth:sanctum')->get('/candidate/dashboard', [DashboardController::class, 'dashboard']);
+// payment
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
+    Route::get('/subscription-status', [SubscriptionController::class, 'status']);
+});
