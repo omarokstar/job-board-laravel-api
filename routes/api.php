@@ -13,15 +13,12 @@ use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Candidate\DashboardController;
 
 use App\Http\Controllers\Employer\CompanyController;
-<<<<<<< HEAD
 // use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\Employer\JobController as Job;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\CategoryController;
-=======
-use App\Http\Controllers\Employer\JobController;
->>>>>>> 3c15275fc5d049d1fb85bdaf495d736306ae6b87
 use App\Http\Controllers\Candidate\JobApplicationController;
 use App\Http\Controllers\Admin\JobModerationController;
 use App\Http\Controllers\Admin\CommentController;
@@ -145,7 +142,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:employer'])->group(function () {
-    Route::post('/jobs', [JobController::class, 'store']);
+    Route::post('/jobs', [Job::class, 'store']);
 });
 
 
