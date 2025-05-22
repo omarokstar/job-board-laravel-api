@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
-
-
-
 public function latestJobs()
 {
     $latestJobs = Job::where('status', 'approved')

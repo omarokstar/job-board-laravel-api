@@ -106,6 +106,22 @@ public function apply(JobApplicationRequest $request, $jobId)
     }
 
 
+
+
+public function getApplications()
+{
+    $user = Auth::user();
+
+   
+    $applications = JobApplication::with('job')
+        ->where('user_id', $user->id)
+        ->get();
+
+    return response()->json(['applications' => $applications], 200);
+}
+
+
+
     protected function storeResume($file)
     {
         if (!$file) {
