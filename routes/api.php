@@ -19,7 +19,6 @@ use App\Http\Controllers\Candidate\JobApplicationController;
 
 
 // admin 
-
 Route::prefix('admin')->group(function () {
     Route::get('/job-moderation', [AdminController::class, 'index'])->name('api.admin.job.moderation.index');
     Route::post('/job/{id}/approve', [AdminController::class, 'approve'])->name('api.admin.job.approve');
@@ -29,12 +28,11 @@ Route::prefix('admin')->group(function () {
     Route::get('/jobs/rejected', [AdminController::class, 'rejected'])->name('api.admin.job.rejected');
     Route::get('/job/{id}', [AdminController::class, 'show'])->name('api.admin.job.show');
 });
-// auth
 
+
+// auth
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-
-
 
 
 Route::get('/email/verify/{id}/{hash}', function (
@@ -60,6 +58,8 @@ Route::get('/email/verify/{id}/{hash}', function (
 
 
 
+
+//employer jobs 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/myjobs', EmployerJobController::class);
 });
@@ -94,13 +94,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
+
+//user
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user()->load(['profile', 'socialLinks', 'resumes']);
 });
 
 
+// Job Applications
 Route::middleware(['auth:sanctum'])->group(function () {
-    // Job Applications
     Route::post('/jobs/{job}/apply', [JobApplicationController::class, 'apply']);
     Route::get('/jobs/{job}/applications', [JobApplicationController::class, 'getJobApplications']);
     Route::get('/applications/{id}/resume', [JobApplicationController::class, 'downloadResume']);
@@ -108,14 +111,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
-
+// company 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/companies/profile', [CompanyController::class, 'getCompanyProfile']);
 });
 
 
-// company
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/companies', CompanyController::class);
 });
@@ -143,6 +145,8 @@ Route::middleware('auth:sanctum')->get('/user/resumes', [UserController::class, 
 
 Route::middleware('auth:sanctum')->get('/candidate/dashboard', [DashboardController::class, 'dashboard']);
 
+
+// payment 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
     Route::get('/subscription-status', [SubscriptionController::class, 'status']);
