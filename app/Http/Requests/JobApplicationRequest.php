@@ -15,7 +15,6 @@ class JobApplicationRequest extends FormRequest
     {
         return [
           'cover_letter' => 'required|string|min:100|max:2000',
-           'resume_path' => 'required|file|mimes:pdf,doc,docx|max:2048'
-        ];
+          'resume_path' => 'required|string',         ];
     }
 }

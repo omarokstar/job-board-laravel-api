@@ -13,13 +13,9 @@ use Illuminate\Validation\Rule;
 
 class JobApplicationController extends Controller
 {
-    public function apply(JobApplicationRequest $request, $jobId)
-    {
-        $user = Auth::user();
-        
-        if ($user->role !== 'candidate') {
-            return response()->json(['message' => 'Unauthorized action.'], 403);
-            }
+  
+public function apply(JobApplicationRequest $request, $jobId)
+{
         $user = $request->user(); 
       if (!$user->subscribed('default')) {
         if ($user->appliedJobs()->count() >= 3) {
@@ -27,25 +23,31 @@ class JobApplicationController extends Controller
         }
     }
 
-        if ($user->applications()->where('job_id', $jobId)->exists()) {
-            return response()->json(['message' => 'You have already applied for this job.'], 409);
-        }
+    $job = Job::findOrFail($jobId);
 
-        $resumePath = $this->storeResume($request->file('resume'));
+    $alreadyApplied = JobApplication::where('user_id', $user->id)
+        ->where('job_id', $jobId)
+        ->exists();
 
-        $application = JobApplication::create([
-            'user_id' => $user->id,
-            'job_id' => $jobId,
-            'cover_letter' => $request->cover_letter,
-            'resume_path' => $resumePath,
-            'status' => 'pending'
-        ]);
-
-        return response()->json([
-            'message' => 'Application submitted successfully.',
-            'application' => $application->load('job')
-        ], 201);
+    if ($alreadyApplied) {
+        return response()->json(['message' => 'You have already applied for this job.'], 409);
     }
+
+    $application = JobApplication::create([
+        'user_id' => $user->id,
+        'job_id' => $jobId,
+        'cover_letter' => $request->cover_letter,
+        'resume_path' => $request->resume_path,
+    ]);
+
+    return response()->json([
+        'message' => 'Application submitted successfully.',
+        'application' => $application,
+    ], 201);
+}
+
+
+
 
 
     public function getJobApplications($jobId)
