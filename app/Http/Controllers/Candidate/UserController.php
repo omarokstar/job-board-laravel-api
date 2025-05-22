@@ -132,8 +132,6 @@ public function updatePassword(Request $request)
         $profilePhotoPath = null;
         if ($request->hasFile('profile_photo')) {
             $profilePhotoPath = $request->file('profile_photo')->store('profile_photos', 'public');
-                \Log::info('Photo path:', [$profilePhotoPath]);
-
         }
 
         // Create user
