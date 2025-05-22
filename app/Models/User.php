@@ -90,7 +90,9 @@ class User extends Authenticatable  implements MustVerifyEmail
             ->withTimestamps();
     }
 
-
-
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class);
+    }
 
 }

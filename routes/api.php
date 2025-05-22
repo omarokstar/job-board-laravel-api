@@ -13,6 +13,7 @@ use App\Http\Controllers\Candidate\UserController;
 use App\Http\Controllers\Candidate\DashboardController;
 
 use App\Http\Controllers\Employer\CompanyController;
+use App\Http\Controllers\Employer\EmployerDashboardController;
 // use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\JobPostController;
 use App\Http\Controllers\JobController;
@@ -138,4 +139,14 @@ Route::middleware('auth:sanctum')->get('/candidate/dashboard', [DashboardControl
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
     Route::get('/subscription-status', [SubscriptionController::class, 'status']);
+});
+
+
+
+
+  
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('employer/dashboard')->group(function () {
+        Route::get('/overview', [EmployerDashboardController::class, 'overview']);
+    });
 });
