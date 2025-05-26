@@ -11,21 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_premium')->default(false);
-
-            //
+        Schema::create('job_tag_pivot', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
      */
-   public function down(): void
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn('is_premium');
-    });
-}
-
+    public function down(): void
+    {
+        Schema::dropIfExists('job_tag_pivot');
+    }
 };
